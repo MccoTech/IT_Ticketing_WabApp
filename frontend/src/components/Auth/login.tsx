@@ -25,6 +25,8 @@ const Login = () =>{
           message.success('You are login')
           setTimeout(() => {
             navigate('/')
+            localStorage.setItem('user',res.data.user)
+            localStorage.setItem('type',res.data.type)
           }, 2000);
         }
         ).catch((error)=>{

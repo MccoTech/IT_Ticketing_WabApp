@@ -23,9 +23,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from api.views import *
+from rest_framework.routers import DefaultRouter
+router = DefaultRouter()
+router.register(r'tags', TagsView, basename='tags')
+router.register(r'ticket', TicketView, basename='ticket')
+router.register(r'user', UserView, basename='user')
+router.register(r'adminresponse', AdminResponseView, basename='adminresponse')
 
 urlpatterns = [
     path('register/', Register.as_view() , name='register'),
     path('login/', Login.as_view() , name='login'),
+    path('', include(router.urls)),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

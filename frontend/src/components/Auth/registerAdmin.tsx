@@ -8,6 +8,7 @@ type FieldType = {
     first_name?:string;
     last_name?:string;
     password?: string;
+    type?:string;
   };
   
   
@@ -17,14 +18,15 @@ type FieldType = {
   };
 
 const Register = () =>{
-  const navigate = useNavigate()
-  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-
+    const navigate = useNavigate()
+    const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    values.type = 'admin'
+    console.log(values)
     await axios.post('http://localhost:8000/register/', values).then((res)=>{
       if(!res)
       message.error('Account couldn\'t be created $')
       if(res.status===201){
-      message.success('Account created successfully')
+        message.success('Account created successfully')
         navigate('/login')
       }
       else
