@@ -55,13 +55,28 @@ class Login (APIView):
 class TagsView(viewsets.ModelViewSet):
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'name',
+    ]
 
 class TicketView(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'description',
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+        'rank',
+        'tags__name',
+    ]
+
     def create(self, request, *args, **kwargs):
         print(request.data)
         T = []
+        tags = {}
         if 'tags' in request.data:
             tags = request.data['tags']
             request.data.pop('tags')
@@ -77,7 +92,7 @@ class TicketView(viewsets.ModelViewSet):
         ts = Ticket.objects.all()
         print('hi')
         return Response({[self.modified_data(T) for T in ts]},200)
-        return super().retrieve(request, *args, **kwargs)
+        # return super().retrieve(request, *args, **kwargs)
     
     def modified_data(data):
         return{
@@ -91,11 +106,24 @@ class TicketView(viewsets.ModelViewSet):
 class UserView(viewsets.ModelViewSet):
     queryset = Users.objects.all()
     serializer_class = UserSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'first_name',
+        'last_name',
+        'email',
+    ]
 
 class AdminResponseView(viewsets.ModelViewSet):
     queryset = AdminResponse.objects.all()
     serializer_class = AdminResponseSerializer
-
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'description',
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+        'ticket__description',
+    ]
     def create(self, request, *args, **kwargs):
         request.data['user'] = Users.objects.get(email=request.data['user']).id
         return super().create(request, *args, **kwargs)

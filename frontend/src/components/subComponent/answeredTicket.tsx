@@ -23,7 +23,7 @@ interface DataType {
     user?:string|null;
   };
   type DataIndex = keyof DataType;
-const Home = () =>{
+const AnsweredTicket = () =>{
     const [isAdmin, setIsAdmin] = useState(false);
     const [adminMode, setAdminMode] = useState(false)
     const [selectedRows, setSelectedRows] = useState<React.Key[]>([])
@@ -104,6 +104,7 @@ const Home = () =>{
             axios.get('http://localhost:8000/user/').then((re)=>{
               users = re.data
             })
+            let admres:any;
             axios.get('http://localhost:8000/adminresponse/').then((res)=>{
               let d:any =[]
               res.data.map(async(r:any)=>{
@@ -116,11 +117,12 @@ const Home = () =>{
                 x.ticket  = r.ticket
                 d.push(x)
               })
+              admres= d;
               setTicketAnswer(d)
             axios.get('http://localhost:8000/ticket/').then((res)=>{
               let d:any =[]
               res.data.map(async(r:any)=>{
-                let x:any = {}
+                if(admres?.find((t:any)=>t.ticket===r.id)){let x:any = {}
                 x.description = r.description
                 x.key = r.id
                 x.rank = r.rank
@@ -131,7 +133,7 @@ const Home = () =>{
                 x.user = users?.find((u:any)=>u.id===r.user).email;
                 x.id = r.id;
                 x.email = users?.find((u:any)=>u.id===r.user).email;
-                d.push(x)
+                d.push(x)}
               })
               setData(d)
               setTickets(res.data)
@@ -144,6 +146,9 @@ const Home = () =>{
         localStorage.getItem('type')==='admin'?setIsAdmin(true):setIsAdmin(false)
         // setData(data1)
     },[navigate])
+    useEffect(()=>{
+        
+    },[data])
     const [answer,setAnswer] = useState(false)
     const onFinish2: FormProps<FieldType2>['onFinish'] = async (values) => {
       console.log(values)
@@ -489,4 +494,4 @@ const Home = () =>{
     )   
 }
 
-export default  Home
+export default  AnsweredTicket
